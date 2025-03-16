@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutrition Guide</title>
+  <style>
+    .home-button {
+  background-color: white;
+  color: #16a34a;
+  border: 2px solid white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #fff;
+  color: #16a34a;
+  border-color: #fff;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: rgb(249, 250, 251);
+    }
+
+    .header {
+      background-color: #16a34a;
+      color: white;
+      padding: 1.5rem 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .header h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .search-container {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .filter-container {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .filter-button {
+      padding: 0.5rem 1rem;
+      border: 2px solid white;
+      border-radius: 0.5rem;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-button:hover,
+    .filter-button.active {
+      background: white;
+      color: #16a34a;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #9ca3af;
+    }
+
+    .info-banner {
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 2rem 0;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #4b5563;
+    }
+
+    .category {
+      margin-bottom: 2rem;
+    }
+
+    .category[data-hidden="true"] {
+      display: none;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .category-header h2 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1f2937;
+    }
+
+    .category-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: #16a34a;
+    }
+
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .food-card {
+      background-color: white;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .food-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .food-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .food-image:hover {
+      opacity: 0.9;
+    }
+
+    .food-content {
+      padding: 1rem;
+    }
+
+    .food-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .food-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      color: #4b5563;
+    }
+
+    .food-benefits {
+      margin-top: 1rem;
+    }
+
+    .food-benefits h4 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .benefits-list {
+      list-style-position: inside;
+      color: #4b5563;
+    }
+
+    .benefits-list li {
+      margin-bottom: 0.25rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 800px;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background-color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .close-modal:hover {
+      background-color: #e5e7eb;
+    }
+
+    .recipe-title {
+      font-size: 2rem;
+      color: #1f2937;
+      margin-bottom: 1.5rem;
+    }
+
+    .recipe-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .recipe-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .recipe-section h3 {
+      font-size: 1.25rem;
+      color: #1f2937;
+      margin-bottom: 0.75rem;
+    }
+
+    .recipe-list {
+      list-style-position: inside;
+      color: #4b5563;
+    }
+
+    .recipe-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .recipe-instructions {
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .recipe-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background-color: #f9fafb;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+
+    .meta-item {
+      text-align: center;
+    }
+
+    .meta-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+    }
+
+    .meta-value {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    @media (max-width: 768px) {
+      .food-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .filter-container {
+        flex-wrap: wrap;
+      }
+      
+      .filter-button {
+        flex: 1;
+        text-align: center;
+      }
+
+      .modal-content {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Nutrition Guide</h1>
+            <a href="index.html" class="home-button">Home</a>
+          </div>
+          <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search for foods..." onkeyup="filterFoods(this.value)">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div class="filter-container">
+            <button class="filter-button active" onclick="filterCategory('all')">All</button>
+            <button class="filter-button" onclick="filterCategory('fruits')">Fruits</button>
+            <button class="filter-button" onclick="filterCategory('vegetables')">Vegetables</button>
+          </div>
+        </div>
+      </header>
+      
+      
+
+  <main class="container">
+    <div class="info-banner">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p>Explore our comprehensive nutrition database to learn about the health benefits and nutritional content of various foods. Click on images to view recipes!</p>
+    </div>
+
+    <section class="category" data-category="fruits">
+      <div class="category-header">
+        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        <h2>Fruits</h2>
+      </div>
+      <div class="food-grid">
+        <!-- Original Fruits -->
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&q=80&w=400" 
+               alt="Apple" 
+               class="food-image"
+               onclick="showRecipe('apple-pie')">
+          <div class="food-content">
+            <h3 class="food-title">Apple</h3>
+            <div class="food-stats">
+              <p>Calories: 95</p>
+              <p>Protein: 0.5g</p>
+              <p>Carbs: 25g</p>
+              <p>Fiber: 4g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>Rich in antioxidants</li>
+                <li>Good source of fiber</li>
+                <li>Supports heart health</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&q=80&w=400" 
+               alt="Banana" 
+               class="food-image"
+               onclick="showRecipe('banana-smoothie')">
+          <div class="food-content">
+            <h3 class="food-title">Banana</h3>
+            <div class="food-stats">
+              <p>Calories: 105</p>
+              <p>Protein: 1.3g</p>
+              <p>Carbs: 27g</p>
+              <p>Fiber: 3.1g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>High in potassium</li>
+                <li>Natural energy boost</li>
+                <li>Aids digestion</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&q=80&w=400" alt="Pineapple" class="food-image">
+          <div class="food-content">
+            <h3 class="food-title">Pineapple</h3>
+            <div class="food-stats">
+              <p>Calories: 82</p>
+              <p>Protein: 0.9g</p>
+              <p>Carbs: 21.6g</p>
+              <p>Fiber: 2.3g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>Contains bromelain enzyme</li>
+                <li>Aids digestion</li>
+                <li>Anti-inflammatory properties</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="category" data-category="vegetables">
+      <div class="category-header">
+        <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+        </svg>
+        <h2>Vegetables</h2>
+      </div>
+      <div class="food-grid">
+        <!-- Original Vegetables -->
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&q=80&w=400" alt="Carrot" class="food-image">
+          <div class="food-content">
+            <h3 class="food-title">Carrot</h3>
+            <div class="food-stats">
+              <p>Calories: 41</p>
+              <p>Protein: 0.9g</p>
+              <p>Carbs: 10g</p>
+              <p>Fiber: 2.8g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>Improves vision</li>
+                <li>Rich in beta carotene</li>
+                <li>Boosts immunity</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&q=80&w=400" alt="Broccoli" class="food-image">
+          <div class="food-content">
+            <h3 class="food-title">Broccoli</h3>
+            <div class="food-stats">
+              <p>Calories: 55</p>
+              <p>Protein: 3.7g</p>
+              <p>Carbs: 11g</p>
+              <p>Fiber: 5.2g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>High in vitamin C</li>
+                <li>Anti-inflammatory</li>
+                <li>Cancer-fighting properties</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Vegetables -->
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&q=80&w=400" alt="Spinach" class="food-image">
+          <div class="food-content">
+            <h3 class="food-title">Potato</h3>
+            <div class="food-stats">
+              <p>Calories: 23</p>
+              <p>Protein: 2.9g</p>
+              <p>Carbs: 3.6g</p>
+              <p>Fiber: 2.2g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>Rich in iron</li>
+                <li>Supports bone health</li>
+                <li>Antioxidant properties</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1587334207407-deb137a97f07?auto=format&fit=crop&q=80&w=400" alt="Bell Pepper" class="food-image">
+          <div class="food-content">
+            <h3 class="food-title">Bell Pepper</h3>
+            <div class="food-stats">
+              <p>Calories: 30</p>
+              <p>Protein: 1g</p>
+              <p>Carbs: 7g</p>
+              <p>Fiber: 2.1g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>High in vitamin C</li>
+                <li>Supports eye health</li>
+                <li>Boosts metabolism</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="food-card">
+          <img src="https://images.unsplash.com/photo-1582284540020-8acbe03f4924?auto=format&fit=crop&q=80&w=400" alt="Sweet Potato" class="food-image">
+          <div class="food-content">
+            <h3 class="food-title">Tomato</h3>
+            <div class="food-stats">
+              <p>Calories: 103</p>
+              <p>Protein: 2g</p>
+              <p>Carbs: 24g</p>
+              <p>Fiber: 3.8g</p>
+            </div>
+            <div class="food-benefits">
+              <h4>Benefits:</h4>
+              <ul class="benefits-list">
+                <li>Rich in beta-carotene</li>
+                <li>Supports gut health</li>
+                <li>Good for blood sugar control</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Recipe Modals -->
+  <div id="apple-pie" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('apple-pie')">&times;</span>
+      <h2 class="recipe-title">Healthy Apple Pie</h2>
+      <img src="https://images.unsplash.com/photo-1621743478914-cc8a86d7e7b5?auto=format&fit=crop&q=80&w=800" alt="Apple Pie" class="recipe-image">
+      
+      <div class="recipe-meta">
+        <div class="meta-item">
+          <div class="meta-label">Prep Time</div>
+          <div class="meta-value">30 mins</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Cook Time</div>
+          <div class="meta-value">45 mins</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Servings</div>
+          <div class="meta-value">8</div>
+        </div>
+      </div>
+
+      <div class="recipe-section">
+        <h3>Ingredients</h3>
+        <ul class="recipe-list">
+          <li>6 cups sliced apples</li>
+          <li>1/2 cup whole wheat flour</li>
+          <li>1/3 cup honey</li>
+          <li>1 tsp cinnamon</li>
+          <li>1/4 tsp nutmeg</li>
+          <li>2 tbsp lemon juice</li>
+          <li>Whole grain pie crust</li>
+        </ul>
+      </div>
+
+      <div class="recipe-section">
+        <h3>Instructions</h3>
+        <ol class="recipe-list">
+          <li>Preheat oven to 375°F (190°C)</li>
+          <li>Mix sliced apples with honey, flour, and spices</li>
+          <li>Pour mixture into pie crust</li>
+          <li>Cover with top crust, seal edges, cut slits for venting</li>
+          <li>Bake for 45 minutes until golden brown</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div id="banana-smoothie" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('banana-smoothie')">&times;</span>
+      <h2 class="recipe-title">Energy Boost Banana Smoothie</h2>
+      <img src="https://images.unsplash.com/photo-1589734575451-8fae88c21b31?auto=format&fit=crop&q=80&w=800" alt="Banana Smoothie" class="recipe-image">
+      
+      <div class="recipe-meta">
+        <div class="meta-item">
+          <div class="meta-label">Prep Time</div>
+          <div class="meta-value">5 mins</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Total Time</div>
+          <div class="meta-value">5 mins</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Servings</div>
+          <div class="meta-value">2</div>
+        </div>
+      </div>
+
+      <div class="recipe-section">
+        <h3>Ingredients</h3>
+        <ul class="recipe-list">
+          <li>2 ripe bananas</li>
+          <li>1 cup Greek yogurt</li>
+          <li>1 cup almond milk</li>
+          <li>1 tbsp honey</li>
+          <li>1 tbsp chia seeds</li>
+          <li>1/2 tsp cinnamon</li>
+          <li>Ice cubes</li>
+        </ul>
+      </div>
+
+      <div class="recipe-section">
+        <h3>Instructions</h3>
+        <ol class="recipe-list">
+          <li>Add all ingredients to a blender</li>
+          <li>Blend until smooth and creamy</li>
+          <li>Add more almond milk if needed for desired consistency</li>
+          <li>Pour into glasses and serve immediately</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function filterCategory(category) {
+      const buttons = document.querySelectorAll('.filter-button');
+      buttons.forEach(button => button.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const sections = document.querySelectorAll('.category');
+      sections.forEach(section => {
+        if (category === 'all') {
+          section.setAttribute('data-hidden', 'false');
+        } else {
+          section.setAttribute('data-hidden', section.getAttribute('data-category') !== category);
+        }
+      });
+    }
+
+    function filterFoods(searchTerm) {
+      searchTerm = searchTerm.toLowerCase();
+      const cards = document.querySelectorAll('.food-card');
+      
+      cards.forEach(card => {
+        const title = card.querySelector('.food-title').textContent.toLowerCase();
+        const isVisible = title.includes(searchTerm);
+        card.style.display = isVisible ? 'block' : 'none';
+      });
+    }
+
+    function showRecipe(recipeId) {
+      const modal = document.getElementById(recipeId);
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(recipeId) {
+      const modal = document.getElementById(recipeId);
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+  </script>
+</body>
+</html>

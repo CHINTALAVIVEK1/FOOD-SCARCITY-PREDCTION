@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Scarcity Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <h2>About the Project</h2>
+           
+            <img src="scarcity.jpeg" alt="Food Scarcity" class="sidebar-img">
+            <button class="collapsible">Key Points</button>
+            <ul class="content">
+                <li>AI-driven insights</li>
+                <li>Real-time data</li>
+                <li>Smart recommendations</li>
+            </ul>
+            <button class="collapsible">Uses</button>
+            <ul class="content">
+                <li>Farmers</li>
+                <li>Policymakers</li>
+                <li>Researchers</li>
+            </ul>
+            <button class="collapsible">Features</button>
+            <ul class="content">
+                <li>Scarcity Prediction</li>
+                <li>BMI Calculator</li>
+                <li>Nutrition Insights</li>
+                <li>AI Chatbot</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="hero">
+                <h1>AI-Powered Food Scarcity Prediction</h1>
+                <p>Analyze food trends, predict shortages, and make informed decisions.</p>
+                <button class="cta">Get Started</button>
+            </section>
+
+            <!-- Navigation Bar Moved Below the Title -->
+            <nav class="top-nav">
+                <a href="https://akreddy31.github.io/Ai-powered-food-scarcity-prediction-system/" class="predict-btn">Predict</a>
+
+<style>
+.predict-btn {
+    background: #1e88e5;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.predict-btn:hover {
+    background: #1565c0;
+}
+</style>
+
+                <a href="bmi.html">BMI</a>
+                <a href="nutrition.html">Nutrition</a>
+                <a href="about.html">About</a>
+            </nav>
+
+            <!-- Attractive Blocks Section -->
+            <section class="info-blocks">
+                <div class="block">
+                    <h3>🌍 Global Food Scarcity</h3>
+                    <p>Over 820 million people worldwide suffer from hunger. AI can help reduce food shortages by predicting supply trends.</p>
+                </div>
+                <div class="block">
+                    <h3>📊 Food Wastage</h3>
+                    <p>30% of food produced is wasted. AI-based insights can reduce waste and improve distribution efficiency.</p>
+                </div>
+                <div class="block">
+                    <h3>🏛️ Government Initiatives</h3>
+                    <p>Governments worldwide use AI-driven models to improve food distribution and prevent scarcity.</p>
+                </div>
+            </section>
+<!-- Chatbot Section -->
+<section id="chatbot">
+    <h2>AI Chatbot Assistant</h2>
+    <p>Ask questions about food scarcity, crop choices, and nutrition.</p>
+    <button class="chatbot-btn" onclick="toggleChatbot()">Chat Now</button>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <h3>Food Assistant Bot</h3>
+            <button class="close-btn" onclick="toggleChatbot()">×</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <p class="bot-message">Hello! Ask me about crops, recipes, or food scarcity.</p>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</section>
+
+        </main>
+    </div>
+    
+
+    <script src="script.js"></script>
+</body>
+</html>

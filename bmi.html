@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Tracker - BMI Calculator</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Typing effect */
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        .typing {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid;
+            width: 0;
+            animation: typing 2s steps(40, end) forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50" style='font-family: Inter, "Noto Sans", sans-serif;'>
+
+    <div class="relative flex min-h-screen flex-col group/design-root overflow-x-hidden">
+        <div class="layout-container flex h-full grow flex-col">
+
+            <!-- Header -->
+            <header class="flex items-center justify-between border-b px-10 py-3">
+                <h2 class="text-lg font-bold">Health Tracker</h2>
+                <a href="index.html" class="bg-[#e7edf3] px-4 py-2 rounded-full font-bold">Home</a>
+            </header>
+
+            <!-- Main Content -->
+            <div class="px-40 flex flex-1 justify-center py-5 relative">
+                <div class="layout-content-container flex flex-col w-[512px] py-5 max-w-[960px] flex-1">
+                    
+                    <h2 class="text-[28px] font-bold text-center pb-3 pt-5">BMI Calculator</h2>
+                    <p class="text-center pb-3">Enter your weight and height below to calculate your BMI.</p>
+
+                    <!-- Weight Input -->
+                    <div class="px-4 py-3">
+                        <label class="block">
+                            <p class="pb-2">Weight (kg)</p>
+                            <input id="weight" type="number" placeholder="60" class="w-full h-12 border rounded-xl p-3" onkeydown="handleEnter(event)" />
+                        </label>
+                    </div>
+
+                    <!-- Height Input with Toggle -->
+                    <div class="px-4 py-3">
+                        <label class="block">
+                            <p class="pb-2">Height (<span id="heightUnit">cm</span>)</p>
+                            <input id="height" type="number" placeholder="170" class="w-full h-12 border rounded-xl p-3" onkeydown="handleEnter(event)" />
+                        </label>
+                        <button onclick="toggleHeightUnit()" class="mt-2 px-4 py-1 bg-gray-300 rounded-full text-sm">Switch to Feet</button>
+                    </div>
+
+                    <!-- Calculate Button -->
+                    <div class="px-4 py-3">
+                        <button onclick="calculateBMI()" class="w-full h-12 bg-[#1980e6] text-white font-bold rounded-full">Calculate</button>
+                    </div>
+
+                    <!-- BMI Result -->
+                    <h3 class="text-lg font-bold px-4 pb-2 pt-4">Your BMI</h3>
+                    <h1 id="bmiResult" class="text-[22px] font-bold px-4 text-left pb-3 pt-5">-</h1>
+
+                    <!-- Progress Bar -->
+                    <div class="flex flex-col gap-3 p-4">
+                        <div class="flex justify-between">
+                            <p id="bmiStatus" class="font-medium">-</p>
+                        </div>
+                        <div class="rounded bg-[#d0dbe7]">
+                            <div id="progressBar" class="h-3 rounded bg-[#1980e6]" style="width: 0%;"></div>
+                        </div>
+                        <p class="text-sm text-[#4e7397]">Below 18.5 = Underweight | 18.5 - 24.9 = Normal | 25+ = Overweight</p>
+                    </div>
+
+                    <!-- Health Suggestions -->
+                    <h3 class="text-lg font-bold px-4 pb-2 pt-4">Health Suggestions</h3>
+                    <p id="bmiMessage" class="px-4 pb-3 typing"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for BMI Calculation -->
+    <script>
+        let heightInCm = true;
+
+        function calculateBMI() {
+            var weight = parseFloat(document.getElementById("weight").value);
+            var height = parseFloat(document.getElementById("height").value);
+
+            if (!weight || !height) {
+                alert("Please enter both weight and height!");
+                return;
+            }
+
+            if (!heightInCm) {
+                height = height * 30.48; // Convert feet to cm
+            }
+
+            height = height / 100; // Convert cm to meters
+            var bmi = (weight / (height * height)).toFixed(1);
+            document.getElementById("bmiResult").innerText = bmi;
+
+            var status = "";
+            var progress = 0;
+            var message = "";
+
+            if (bmi < 18.5) {
+                status = "Underweight";
+                progress = 15;
+                message = "Consider a balanced diet to gain healthy weight.";
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                status = "Normal Weight";
+                progress = 50;
+                message = "Great! Maintain your healthy lifestyle.";
+            } else if (bmi >= 25 && bmi <= 29.9) {
+                status = "Overweight";
+                progress = 75;
+                message = "Try incorporating more exercise and a balanced diet.";
+            } else {
+                status = "Obese";
+                progress = 100;
+                message = "Consult a healthcare professional for guidance.";
+            }
+
+            document.getElementById("bmiStatus").innerText = status;
+            document.getElementById("progressBar").style.width = progress + "%";
+
+            // Typing Effect
+            let bmiMessageElem = document.getElementById("bmiMessage");
+            bmiMessageElem.innerHTML = "";
+            let i = 0;
+
+            function typeEffect() {
+                if (i < message.length) {
+                    bmiMessageElem.innerHTML += message.charAt(i);
+                    i++;
+                    setTimeout(typeEffect, 50);
+                }
+            }
+            typeEffect();
+        }
+
+        function handleEnter(event) {
+            if (event.key === "Enter") {
+                calculateBMI();
+            }
+        }
+
+        function toggleHeightUnit() {
+            heightInCm = !heightInCm;
+            document.getElementById("heightUnit").innerText = heightInCm ? "cm" : "feet";
+            document.querySelector("button[onclick='toggleHeightUnit()']").innerText = heightInCm ? "Switch to Feet" : "Switch to Cm";
+        }
+    </script>
+
+</body>
+</html>
