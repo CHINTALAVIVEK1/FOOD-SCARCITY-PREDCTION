@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Results - Food Scarcity Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body text-center">
+                <h1 class="display-4 mb-3">Food Scarcity Prediction Results</h1>
+                <p class="lead">Results for {{ results.crop }} in {{ results.region }} ({{ results.year }})</p>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Prediction Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Input Parameters</h4>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Region:</th>
+                                    <td>{{ results.region }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Crop:</th>
+                                    <td>{{ results.crop }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Year:</th>
+                                    <td>{{ results.year }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Population:</th>
+                                    <td>{{ results.population|number_format }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Rainfall:</th>
+                                    <td>{{ results.rainfall|round(2) }} mm</td>
+                                </tr>
+                                <tr>
+                                    <th>Temperature:</th>
+                                    <td>{{ results.temperature|round(2) }}°C</td>
+                                </tr>
+                                <tr>
+                                    <th>Production:</th>
+                                    <td>{{ results.production|number_format }} tonnes</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Prediction Results</h4>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Consumption Need:</th>
+                                    <td>{{ results.consumption_need|number_format }} tonnes</td>
+                                </tr>
+                                <tr>
+                                    <th>Balance:</th>
+                                    <td>{{ results.balance_tonnes|number_format }} tonnes</td>
+                                </tr>
+                                <tr>
+                                    <th>Balance Percentage:</th>
+                                    <td>{{ results.balance_percentage|round(2) }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>Scarcity Level:</th>
+                                    <td>
+                                        <span class="badge" style="background-color: {{ results.color }};">
+                                            {{ results.scarcity_level }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Prediction Time:</th>
+                                    <td>{{ results.timestamp }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header" style="background-color: {{ results.color }}; color: white;">
+                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Interpretation and Recommendations</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>What does this prediction mean?</h5>
+                        
+                        {% if results.balance_percentage <= -20 %}
+                        <div class="alert alert-danger">
+                            <p><strong>Severe Scarcity ({{ results.balance_percentage|round(2) }}%)</strong>: The region is facing a critical shortage of {{ results.crop }} production relative to its population's needs. The production can only meet {{ (100 + results.balance_percentage)|round(2) }}% of the consumption requirements.</p>
+                            
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                <li>Immediate food aid or imports may be necessary</li>
+                                <li>Implement emergency distribution systems</li>
+                                <li>Consider crop substitution with more productive alternatives</li>
+                                <li>Invest in irrigation and agricultural technology to increase yields</li>
+                                <li>Develop drought-resistant or high-yield varieties of {{ results.crop }}</li>
+                            </ul>
+                        </div>
+                        
+                        {% elif results.balance_percentage <= -10 %}
+                        <div class="alert alert-warning">
+                            <p><strong>Moderate Scarcity ({{ results.balance_percentage|round(2) }}%)</strong>: The region has a significant shortage of {{ results.crop }} production. The production can meet {{ (100 + results.balance_percentage)|round(2) }}% of the consumption requirements.</p>
+                            
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                <li>Plan for supplementary imports or food transfers from surplus regions</li>
+                                <li>Implement targeted subsidy programs</li>
+                                <li>Improve agricultural practices and farmer training</li>
+                                <li>Invest in water management and soil health</li>
+                                <li>Consider crop insurance programs to protect farmers</li>
+                            </ul>
+                        </div>
+                        
+                        {% elif results.balance_percentage <= -5 %}
+                        <div class="alert alert-warning" style="background-color: #fff3cd;">
+                            <p><strong>Mild Scarcity ({{ results.balance_percentage|round(2) }}%)</strong>: The region has a slight shortage of {{ results.crop }} production. The production can meet {{ (100 + results.balance_percentage)|round(2) }}% of the consumption requirements.</p>
+                            
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                <li>Monitor food prices and availability</li>
+                                <li>Implement targeted agricultural extension services</li>
+                                <li>Improve storage and distribution infrastructure</li>
+                                <li>Promote efficient farming techniques</li>
+                                <li>Consider crop diversification strategies</li>
+                            </ul>
+                        </div>
+                        
+                        {% elif results.balance_percentage <= 5 %}
+                        <div class="alert alert-secondary">
+                            <p><strong>Balanced ({{ results.balance_percentage|round(2) }}%)</strong>: The region has a relatively balanced production of {{ results.crop }} compared to its consumption needs. The production is within 5% of the consumption requirements.</p>
+                            
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                <li>Maintain current agricultural policies</li>
+                                <li>Focus on sustainability and resilience</li>
+                                <li>Improve storage facilities to handle seasonal variations</li>
+                                <li>Develop contingency plans for climate disruptions</li>
+                                <li>Invest in market linkages and value addition</li>
+                            </ul>
+                        </div>
+                        
+                        {% elif results.balance_percentage <= 15 %}
+                        <div class="alert alert-success" style="background-color: #d4edda;">
+                            <p><strong>Mild Surplus ({{ results.balance_percentage|round(2) }}%)</strong>: The region produces slightly more {{ results.crop }} than its consumption needs. The production exceeds consumption by {{ results.balance_percentage|round(2) }}%.</p>
+                            
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                <li>Develop processing and value addition facilities</li>
+                                <li>Improve storage infrastructure to prevent post-harvest losses</li>
+                                <li>Explore domestic market opportunities in deficit regions</li>
+                                <li>Consider export opportunities for high-value products</li>
+                                <li>Invest in quality improvement and certification</li>
+                            </ul>
+                        </div>
+                        
+                        {% elif results.balance_percentage <= 30 %}
+                        <div class="alert alert-success">
+                            <p><strong>Moderate Surplus ({{ results.balance_percentage|round(2) }}%)</strong>: The region produces significantly more {{ results.crop }} than its consumption needs. The production exceeds consumption by {{ results.balance_percentage|round(2) }}%.</p>
+                            
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                <li>Develop robust supply chains to deficit regions</li>
+                                <li>Invest in food processing industries</li>
+                                <li>Explore export markets and trade opportunities</li>
+                                <li>Implement price stabilization mechanisms</li>
+                                <li>Consider crop diversification to balance market risks</li>
+                            </ul>
+                        </div>
+                        
+                        {% else %}
+                        <div class="alert alert-success" style="background-color: #c3e6cb;">
+                            <p><strong>Large Surplus ({{ results.balance_percentage|round(2) }}%)</strong>: The region produces far more {{ results.crop }} than its consumption needs. The production exceeds consumption by {{ results.balance_percentage|round(2) }}%.</p>
+                            
+                            <h6>Recommendations:</h6>
+                            <ul>
+                                <li>Develop extensive storage and preservation infrastructure</li>
+                                <li>Establish food processing industries for value addition</li>
+                                <li>Create strong export channels and marketing strategies</li>
+                                <li>Implement buffer stock policies to stabilize prices</li>
+                                <li>Consider balanced crop planning to avoid overproduction</li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        <h5 class="mt-4">Factors Affecting This Prediction</h5>
+                        <ul>
+                            <li><strong>Population Size:</strong> {{ results.population|number_format }} people in {{ results.region }}</li>
+                            <li><strong>Production Capacity:</strong> {{ results.production|number_format }} tonnes of {{ results.crop }}</li>
+                            <li><strong>Consumption Need:</strong> {{ results.consumption_need|number_format }} tonnes based on per capita requirements</li>
+                            <li><strong>Environmental Factors:</strong> Rainfall ({{ results.rainfall|round(2) }} mm) and Temperature ({{ results.temperature|round(2) }}°C)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="/" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Make Another Prediction
+            </a>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
